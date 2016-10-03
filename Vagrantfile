@@ -6,8 +6,12 @@ Vagrant.require_version ">= 1.6.0"
 VAGRANTFILE_API_VERSION = "2"
 
 $configureHost = <<SCRIPT
-sudo apt-get -y install git-all
 sudo apt-get -y install wget
+sudo apt-get -y install git-all
+git config --global user.name "jhole89"
+git config --global user.email "joellutman@gmail.com"
+cd /vagrant
+git clone https://github.com/jhole89/Test_NLP_Project.git
 SCRIPT
 
 # Script to workaround multiple quote nesting
@@ -17,6 +21,9 @@ SCRIPT
 
 # Create and configure the VM(s)
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  
+  # Sync /vagrant on host box with OS <project dir>/vagrant
+  config.vm.synced_folder ".", "/vagrant"
   
   # Define host box image
   config.vm.box = "ubuntu/trusty64"
@@ -40,5 +47,4 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   
   # Forward 8888 to localhost:8888
   config.vm.network "forwarded_port", guest: 8888, host: 8888
-  config.vm.synced_folder ".", "/vagrant"
 end
