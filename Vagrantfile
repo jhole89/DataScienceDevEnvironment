@@ -1,5 +1,5 @@
-# -*- mode: ruby -*-
-# vi: set ft=ruby :
+# -*- mode: ruby;-*-
+# vi: set ft=ruby:
 
 # Specify Vagrant version, Vagrant API version
 Vagrant.require_version ">= 1.6.0"
