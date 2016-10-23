@@ -5,7 +5,8 @@
 Vagrant.require_version ">= 1.6.0"
 VAGRANTFILE_API_VERSION = "2"
 
-$configureHost = <<SCRIPT
+# Bootstrap script to install host applications
+$bootstrap = <<SCRIPT
 sudo apt-get -y install wget
 sudo apt-get -y install git-all
 git config --global user.name "jhole89"
@@ -14,7 +15,7 @@ cd /vagrant
 git clone https://github.com/jhole89/Test_NLP_Project.git
 SCRIPT
 
-# Script to workaround multiple quote nesting
+# Script to workaround multiple quote nesting for Anaconda3 cmd
 $jupyterServer = <<SCRIPT
 /bin/bash -c "/opt/conda/bin/conda install jupyter -y --quiet && mkdir /opt/notebooks && /opt/conda/bin/jupyter notebook --notebook-dir=/opt/notebooks --ip='*' --port=8888 --no-browser"
 SCRIPT
@@ -35,9 +36,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   end
   
   # Install applications on the host box
-  config.vm.provision "shell", inline: $configureHost
+  config.vm.provision "shell", inline: $bootstrap
   
-  # Use Docker provisioner to pull Anaconda3 and run Jupyter Notebook server on port 8888
+  # Use Docker to pull Anaconda3 and run Jupyter Notebook server
   config.vm.provision "docker" do |d|
     d.pull_images "continuumio/anaconda3"
 	d.run "continuumio/anaconda3",
@@ -45,6 +46,14 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 	  cmd: $jupyterServer
   end
   
-  # Forward 8888 to localhost:8888
+  # Use Docker to pull and run ElasticSearch database
+  config.vm.provision "docker" do |d|
+	d.pull_images "elasticsearch"
+	d.run "elasticsearch",
+	  args: "-p '9200:9200'"
+  end
+  
+  # Forward application ports to localhost
   config.vm.network "forwarded_port", guest: 8888, host: 8888
+  config.vm.network "forwarded_port", guest: 9200, host: 9200
 end
