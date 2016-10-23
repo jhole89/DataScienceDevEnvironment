@@ -46,6 +46,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 	  cmd: $jupyterServer
   end
   
+  # Use Docker to pull and run Neo4j database
+  config.vm.provision "docker" do |d|
+    d.pull_images "neo4j"
+	d.run "neo4j",
+	  args: "--publish=7474:7474 --publish=7687:7687 --volume=$HOME/neo4j/data:/data"
+  end
+  
 # Forward application ports to localhost
   config.vm.network "forwarded_port", guest: 8888, host: 8888
+  config.vm.network "forwarded_port", guest: 7474, host: 7474
+  config.vm.network "forwarded_port", guest: 7687, host: 7687
 end
