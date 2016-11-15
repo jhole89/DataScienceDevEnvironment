@@ -12,7 +12,9 @@ sudo apt-get -y install git-all
 git config --global user.name "jhole89"
 git config --global user.email "joellutman@gmail.com"
 cd /vagrant
-git clone https://github.com/jhole89/Test_NLP_Project.git
+if [ ! -d "Test_NLP_Project" ] ; then 
+     git clone https://github.com/jhole89/Test_NLP_Project.git "Test_NLP_Project"
+fi
 SCRIPT
 
 # Script to workaround multiple quote nesting for Anaconda3 cmd
