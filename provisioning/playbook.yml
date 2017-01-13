@@ -1,0 +1,23 @@
+---
+- name: Install the "wget" package
+  apt:
+    name: wget
+
+- name: Install the "git-all" package
+  apt:
+    name: git-all
+
+- pip:
+    name:docker-py
+
+- git_config:
+    name: user.name
+    value: "jhole89"
+
+- git_config:
+    name: user.email
+    value: "joellutman@gmail.com"
+
+- git:
+    repo: https://github.com/jhole89/Test_NLP_Project.git
+    dest: /

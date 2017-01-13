@@ -5,18 +5,6 @@
 Vagrant.require_version ">= 1.6.0"
 VAGRANTFILE_API_VERSION = "2"
 
-# Bootstrap script to install host applications
-$bootstrap = <<SCRIPT
-sudo apt-get -y install wget
-sudo apt-get -y install git-all
-git config --global user.name "jhole89"
-git config --global user.email "joellutman@gmail.com"
-cd /vagrant
-if [ ! -d "Test_NLP_Project" ] ; then 
-     git clone https://github.com/jhole89/Test_NLP_Project.git "Test_NLP_Project"
-fi
-SCRIPT
-
 # Script to workaround multiple quote nesting for Anaconda3 cmd
 $jupyterServer = <<SCRIPT
 /bin/bash -c "/opt/conda/bin/conda install jupyter -y --quiet && mkdir /opt/notebooks && /opt/conda/bin/jupyter notebook --notebook-dir=/opt/notebooks --ip='*' --port=8888 --no-browser"
@@ -37,8 +25,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 	vb.customize ["modifyvm", :id, "--cpus", "2"]
   end
   
-  # Install applications on the host box
-  config.vm.provision "shell", inline: $bootstrap
+  # Run Ansible from the Vagrant VM
+  config.vm.provision "ansible_local" do |ansible|
+    ansible.playbook = "provisioning/playbook.yml"
+  end
   
   # Use Docker to pull Anaconda3 and run Jupyter Notebook server
   config.vm.provision "docker" do |d|
