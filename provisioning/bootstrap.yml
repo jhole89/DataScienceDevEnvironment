@@ -1,0 +1,32 @@
+---
+- hosts: all
+  become: yes
+  become_method: sudo
+  tasks:
+  - name: install apt packages
+    apt: name={{item}} state=latest update_cache=yes
+    with_items:
+    - python-pip
+    - wget
+    - git-all
+
+  - name: install docker-py
+    pip: name=docker-py
+
+  - name: configure git username
+    git_config: name=user.name value="jhole89"
+
+  - name: configure git user email 
+    git_config: name=user.email value="joellutman@gmail.com"
+
+  - name: clone git project
+    git: repo=https://github.com/jhole89/Test_NLP_Project.git dest=/NLP/
+
+  - name: download docker installation
+    get_url: url=https://get.docker.com dest=/etc/docker.sh mode=740
+
+  - name: install docker
+    shell:  /etc/docker.sh
+
+  - name: remove docker installation script
+    file: path=/etc/docker.sh state=absent
