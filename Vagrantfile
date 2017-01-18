@@ -1,5 +1,5 @@
-# -*- mode: ruby -*-
-# vi: set ft=ruby :
+# -*- mode: ruby;-*-
+# vi: set ft=ruby:
 
 # Specify Vagrant version, Vagrant API version
 Vagrant.require_version ">= 1.6.0"
@@ -12,7 +12,9 @@ sudo apt-get -y install git-all
 git config --global user.name "jhole89"
 git config --global user.email "joellutman@gmail.com"
 cd /vagrant
-git clone https://github.com/jhole89/Test_NLP_Project.git
+if [ ! -d "Test_NLP_Project" ] ; then 
+     git clone https://github.com/jhole89/Test_NLP_Project.git "Test_NLP_Project"
+fi
 SCRIPT
 
 # Script to workaround multiple quote nesting for Anaconda3 cmd
@@ -53,7 +55,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 	  args: "-p '9200:9200'"
   end
   
-  # Forward application ports to localhost
+# Forward application ports to localhost
+>>>>>>> master
   config.vm.network "forwarded_port", guest: 8888, host: 8888
   config.vm.network "forwarded_port", guest: 9200, host: 9200
 end
